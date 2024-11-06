@@ -9,14 +9,14 @@ import java.util.List;
 
 public class DetalleFacturaDaoImpl implements IDetalleFacturaDao {
 
-	private static EntityManager entityManager = EmfSingleton.getInstance().getEmf().createEntityManager();
+	private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
     @Override
     public void guardar(DetalleFactura detalleFactura) {
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = manager.getTransaction();
         try {
             transaction.begin();
-            entityManager.persist(detalleFactura);
+            manager.persist(detalleFactura);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -26,15 +26,15 @@ public class DetalleFacturaDaoImpl implements IDetalleFacturaDao {
 
     @Override
     public DetalleFactura buscarPorId(Long id) {
-        return entityManager.find(DetalleFactura.class, id);
+        return manager.find(DetalleFactura.class, id);
     }
 
     @Override
     public void actualizar(DetalleFactura detalleFactura) {
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = manager.getTransaction();
         try {
             transaction.begin();
-            entityManager.merge(detalleFactura);
+            manager.merge(detalleFactura);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -44,13 +44,13 @@ public class DetalleFacturaDaoImpl implements IDetalleFacturaDao {
 
     @Override
     public void eliminar(Long id) {
-        EntityTransaction transaction = entityManager.getTransaction();
+        EntityTransaction transaction = manager.getTransaction();
         try {
             transaction.begin();
             DetalleFactura detalleFactura = buscarPorId(id);
             if (detalleFactura != null) {
                 detalleFactura.setCantidad(0);
-                entityManager.merge(detalleFactura);
+                manager.merge(detalleFactura);
             }
             transaction.commit();
         } catch (Exception e) {
@@ -61,6 +61,6 @@ public class DetalleFacturaDaoImpl implements IDetalleFacturaDao {
 
     @Override
     public List<DetalleFactura> obtenerTodos() {
-        return entityManager.createQuery("SELECT d FROM DetalleFactura d", DetalleFactura.class).getResultList();
+        return manager.createQuery("SELECT d FROM DetalleFactura d", DetalleFactura.class).getResultList();
     }
 }

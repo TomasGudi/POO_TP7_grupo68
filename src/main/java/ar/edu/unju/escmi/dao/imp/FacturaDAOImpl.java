@@ -3,7 +3,6 @@ package ar.edu.unju.escmi.dao.imp;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
 
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IFacturaDao;
