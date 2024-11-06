@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IClienteDao;
 import ar.edu.unju.escmi.entities.Cliente;
 
 
 public class ClienteDAOImpl implements IClienteDao {
+	
 	private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
 	@Override
