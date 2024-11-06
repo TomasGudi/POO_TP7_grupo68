@@ -1,9 +1,8 @@
 package ar.edu.unju.escmi.main;
 
-import java.time.LocalDate;
 import java.util.Scanner;
 
-import antlr.collections.List;
+import java.util.List;
 import ar.edu.unju.escmi.entities.*;
 import ar.edu.unju.escmi.dao.*;
 import ar.edu.unju.escmi.dao.imp.*;

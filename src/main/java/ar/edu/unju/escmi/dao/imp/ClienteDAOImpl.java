@@ -16,15 +16,15 @@ public class ClienteDAOImpl implements IClienteDao {
 	@Override
 	public void guardar(Cliente cliente) {
         try {
-            manager.getTransaction().begin();
-            manager.persist(cliente);
-            manager.getTransaction().commit();
+        	manager.getTransaction().begin();
+        	manager.persist(cliente);
+        	manager.getTransaction().commit();
         } catch (Exception e) {
         	if(manager.getTransaction() != null)
         		manager.getTransaction().rollback();
             System.out.println("No se pudo guardar el cliente");
         } finally {
-            manager.close();
+        	manager.close();
         }
 	}
 
@@ -36,7 +36,7 @@ public class ClienteDAOImpl implements IClienteDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            manager.close();
+        	manager.close();
         }
         return cliente;
 	}
@@ -44,14 +44,14 @@ public class ClienteDAOImpl implements IClienteDao {
 	@Override
 	public void actualizar(Cliente cliente) {
         try {
-            manager.getTransaction().begin();
-            manager.merge(cliente);
-            manager.getTransaction().commit();
+        	manager.getTransaction().begin();
+        	manager.merge(cliente);
+        	manager.getTransaction().commit();
         } catch (Exception e) {
-            manager.getTransaction().rollback();
+        	manager.getTransaction().rollback();
             e.printStackTrace();
         } finally {
-            manager.close();
+        	manager.close();
         }
 		
 	}
@@ -59,17 +59,17 @@ public class ClienteDAOImpl implements IClienteDao {
 	@Override
 	public void eliminar(Long id) {
 		try {
-            manager.getTransaction().begin();
+			manager.getTransaction().begin();
             Cliente cliente = manager.find(Cliente.class, id);
             if (cliente != null) {
-                manager.remove(cliente);
+            	manager.remove(cliente);
             }
             manager.getTransaction().commit();
         } catch (Exception e) {
-            manager.getTransaction().rollback();
+        	manager.getTransaction().rollback();
             e.printStackTrace();
         } finally {
-            manager.close();
+        	manager.close();
         }
 		
 	}
@@ -82,7 +82,7 @@ public class ClienteDAOImpl implements IClienteDao {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            manager.close();
+        	manager.close();
         }
         return clientes;
 	}
