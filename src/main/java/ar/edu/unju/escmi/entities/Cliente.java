@@ -66,9 +66,8 @@ public class Cliente {
 	public void setEstado(boolean estado) {
 		this.estado = estado;
 	}
-	public Cliente(int id, String nombre, String apellido, String domicilio, int dni, boolean estado) {
+	public Cliente(String nombre, String apellido, String domicilio, int dni, boolean estado) {
 		super();
-		this.id = id;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.domicilio = domicilio;

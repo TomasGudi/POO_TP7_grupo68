@@ -1,15 +1,15 @@
 package ar.edu.unju.escmi.dao.imp;
 
+import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IDetalleFacturaDao;
 import ar.edu.unju.escmi.entities.DetalleFactura;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 
 public class DetalleFacturaDaoImpl implements IDetalleFacturaDao {
 
-    private EntityManager entityManager = Persistence.createEntityManagerFactory("miUnidadPersistencia").createEntityManager();
+	private static EntityManager entityManager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
     @Override
     public void guardar(DetalleFactura detalleFactura) {
@@ -49,7 +49,7 @@ public class DetalleFacturaDaoImpl implements IDetalleFacturaDao {
             transaction.begin();
             DetalleFactura detalleFactura = buscarPorId(id);
             if (detalleFactura != null) {
-                detalleFactura.setCantidad(0); //representa la eliminacion logica al establecer cantidad en 0
+                detalleFactura.setCantidad(0);
                 entityManager.merge(detalleFactura);
             }
             transaction.commit();

@@ -7,14 +7,14 @@ import java.time.LocalDate;
 	public class Factura {
 
 	    @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID autoincremental
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
 
 	    @Column(name = "fecha", nullable = false)
 	    private LocalDate fecha;
 
 	    @ManyToOne
-	    @JoinColumn(name = "cliente_id", nullable = false) // Define la relación con Cliente
+	    @JoinColumn(name = "cliente_id", nullable = false) 
 	    private Cliente cliente;
 
 	    @Column(name = "domicilio", nullable = false, length = 100)
@@ -26,12 +26,10 @@ import java.time.LocalDate;
 	    @Column(name = "estado", nullable = false)
 	    private boolean estado;
 
-	    // Constructor sin argumentos
 	    public Factura() {
-	        this.fecha = LocalDate.now(); // Asigna la fecha actual por defecto
+	        this.fecha = LocalDate.now(); 
 	    }
 
-	    // Constructor con argumentos
 	    public Factura(Cliente cliente, String domicilio, double total, boolean estado) {
 	        this.fecha = LocalDate.now();
 	        this.cliente = cliente;
@@ -40,7 +38,6 @@ import java.time.LocalDate;
 	        this.estado = estado;
 	    }
 
-	    // Getters y setters
 	    public Long getId() {
 	        return id;
 	    }

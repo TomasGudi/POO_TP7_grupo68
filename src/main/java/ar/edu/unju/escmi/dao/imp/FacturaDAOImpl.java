@@ -3,15 +3,18 @@ package ar.edu.unju.escmi.dao.imp;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 
 import ar.edu.unju.escmi.config.EmfSingleton;
+import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.entities.Factura;
 
-public class FacturaDAOImpl {
+public class FacturaDAOImpl implements IFacturaDao {
 	
-	private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+	private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();	
 	
-	void guardar(Factura factura) {
+    @Override
+	public void guardar(Factura factura) {
 		try {
             manager.getTransaction().begin();
             manager.persist(factura);
@@ -24,7 +27,9 @@ public class FacturaDAOImpl {
             manager.close();
         }
 	}
-    Factura buscarPorId(Long id) {
+    
+    @Override
+	public Factura buscarPorId(Long id) {
     	Factura factura = null;
         try {
             factura = manager.find(Factura.class, id);
@@ -35,7 +40,7 @@ public class FacturaDAOImpl {
         }
         return factura;
     }
-    void actualizar(Factura factura) {
+    public void actualizar(Factura factura) {
     	try {
             manager.getTransaction().begin();
             manager.merge(factura);
@@ -47,7 +52,9 @@ public class FacturaDAOImpl {
             manager.close();
         }
     }
-    void eliminar(Long id) {
+    
+    @Override
+    public void eliminar(Long id) {
     	try {
             manager.getTransaction().begin();
             Factura factura = manager.find(Factura.class, id);
@@ -62,7 +69,9 @@ public class FacturaDAOImpl {
             manager.close();
         }
     }
-    List<Factura> obtenerTodos(){
+    
+    @Override
+    public List<Factura> obtenerTodos(){
     	List<Factura> facturas = null;
         try {
             facturas = manager.createQuery("FROM Factura", Factura.class).getResultList();

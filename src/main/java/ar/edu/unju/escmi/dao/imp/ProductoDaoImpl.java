@@ -1,16 +1,16 @@
 package ar.edu.unju.escmi.dao.imp;
 
+import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IProductoDao;
 import ar.edu.unju.escmi.entities.Producto;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.util.List;
 
 public class ProductoDaoImpl implements IProductoDao {
 
-    private EntityManager entityManager = Persistence.createEntityManagerFactory("miUnidadPersistencia").createEntityManager();
-
+	private static EntityManager entityManager = EmfSingleton.getInstance().getEmf().createEntityManager();
+	
     @Override
     public void guardar(Producto producto) {
         EntityTransaction transaction = entityManager.getTransaction();
