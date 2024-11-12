@@ -1,90 +1,67 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
-
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IClienteDao;
 import ar.edu.unju.escmi.entities.Cliente;
 
-
 public class ClienteDAOImpl implements IClienteDao {
-	
-	private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    
+    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
-	@Override
-	public void guardar(Cliente cliente) {
+    @Override
+    public void guardar(Cliente cliente) {
         try {
-        	manager.getTransaction().begin();
-        	manager.persist(cliente);
-        	manager.getTransaction().commit();
+            manager.getTransaction().begin();
+            manager.persist(cliente);
+            manager.getTransaction().commit();
         } catch (Exception e) {
-        	if(manager.getTransaction() != null)
-        		manager.getTransaction().rollback();
-            System.out.println("No se pudo guardar el cliente");
-        } finally {
-        	manager.close();
+            manager.getTransaction().rollback();
+            throw new RuntimeException("Error al guardar el cliente", e);
         }
-	}
+    }
 
-	@Override
-	public Cliente buscarPorId(Long id) {
-		Cliente cliente = null;
+    @Override
+    public Cliente buscarPorId(Long id) {
+        Cliente cliente = null;
         try {
             cliente = manager.find(Cliente.class, id);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-        	manager.close();
         }
-        return cliente;
-	}
+        return cliente; // NO cerrar el EntityManager aquí
+    }
 
-	@Override
-	public void actualizar(Cliente cliente) {
+    @Override
+    public void actualizar(Cliente cliente) {
         try {
-        	manager.getTransaction().begin();
-        	manager.merge(cliente);
-        	manager.getTransaction().commit();
-        } catch (Exception e) {
-        	manager.getTransaction().rollback();
-            e.printStackTrace();
-        } finally {
-        	manager.close();
-        }
-		
-	}
-
-	@Override
-	public void eliminar(Long id) {
-		try {
-			manager.getTransaction().begin();
-            Cliente cliente = manager.find(Cliente.class, id);
-            if (cliente != null) {
-            	manager.remove(cliente);
-            }
+            manager.getTransaction().begin();
+            manager.merge(cliente);
             manager.getTransaction().commit();
         } catch (Exception e) {
-        	manager.getTransaction().rollback();
-            e.printStackTrace();
-        } finally {
-        	manager.close();
+            manager.getTransaction().rollback();
+            throw new RuntimeException("Error al actualizar el cliente", e);
         }
-		
-	}
+    }
 
-	@Override
-	public List<Cliente> obtenerTodos() {
-		List<Cliente> clientes = null;
+    @Override
+    public void eliminar(Long id) {
+        Cliente cliente = buscarPorId(id);
         try {
-            clientes = manager.createQuery("FROM Cliente", Cliente.class).getResultList();
+            manager.getTransaction().begin();
+            cliente.setEstado(false);
+            manager.merge(cliente);
+            manager.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        	manager.close();
+            manager.getTransaction().rollback();
+            throw new RuntimeException("Error al eliminar el cliente", e);
         }
-        return clientes;
-	}
+    }
 
+    @Override
+    public List<Cliente> obtenerTodos() {
+        return manager.createQuery("FROM Cliente WHERE estado = true", Cliente.class).getResultList();
+    }
 }
+

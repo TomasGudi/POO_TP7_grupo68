@@ -1,60 +1,56 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
-
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.entities.Factura;
 
 public class FacturaDAOImpl implements IFacturaDao {
-	
-	private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();	
-	
+
+    // Obtenemos el EntityManager del Singleton
+    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+
     @Override
-	public void guardar(Factura factura) {
-		try {
+    public void guardar(Factura factura) {
+        try {
             manager.getTransaction().begin();
             manager.persist(factura);
             manager.getTransaction().commit();
         } catch (Exception e) {
-        	if(manager.getTransaction() != null)
-        		manager.getTransaction().rollback();
-            System.out.println("No se pudo guardar la factura ");
-        } finally {
-            manager.close();
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            throw new RuntimeException("No se pudo guardar la factura", e);
         }
-	}
-    
-    @Override
-	public Factura buscarPorId(Long id) {
-    	Factura factura = null;
-        try {
-            factura = manager.find(Factura.class, id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            manager.close();
-        }
-        return factura;
     }
+
+    @Override
+    public Factura buscarPorId(Long id) {
+        try {
+            return manager.find(Factura.class, id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar la factura con ID " + id, e);
+        }
+    }
+
+    @Override
     public void actualizar(Factura factura) {
-    	try {
+        try {
             manager.getTransaction().begin();
             manager.merge(factura);
             manager.getTransaction().commit();
         } catch (Exception e) {
-            manager.getTransaction().rollback();
-            e.printStackTrace();
-        } finally {
-            manager.close();
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            throw new RuntimeException("Error al actualizar la factura", e);
         }
     }
-    
+
     @Override
     public void eliminar(Long id) {
-    	try {
+        try {
             manager.getTransaction().begin();
             Factura factura = manager.find(Factura.class, id);
             if (factura != null) {
@@ -62,23 +58,19 @@ public class FacturaDAOImpl implements IFacturaDao {
             }
             manager.getTransaction().commit();
         } catch (Exception e) {
-            manager.getTransaction().rollback();
-            e.printStackTrace();
-        } finally {
-            manager.close();
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            throw new RuntimeException("Error al eliminar la factura", e);
         }
     }
-    
+
     @Override
-    public List<Factura> obtenerTodos(){
-    	List<Factura> facturas = null;
+    public List<Factura> obtenerTodos() {
         try {
-            facturas = manager.createQuery("FROM Factura", Factura.class).getResultList();
+            return manager.createQuery("FROM Factura", Factura.class).getResultList();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            manager.close();
+            throw new RuntimeException("Error al obtener todas las facturas", e);
         }
-        return facturas;
-	}
+    }
 }

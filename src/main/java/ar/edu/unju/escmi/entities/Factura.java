@@ -85,6 +85,16 @@ import java.time.LocalDate;
 	    public void setEstado(boolean estado) {
 	        this.estado = estado;
 	    }
-	}
+	    @Override
+	    public String toString() {
+	        return "Factura{" +
+	               "ID=" + id +
+	               ", Fecha=" + fecha +
+	               ", Cliente=" + cliente.getNombre() + " " + cliente.getApellido() +
+	               ", Total=" + total +
+	               ", Estado=" + (estado ? "Activa" : "Eliminada") +
+	               '}';
+	    }
 
+	}
 
