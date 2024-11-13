@@ -19,6 +19,10 @@ public class DetalleFactura {
 
     @Column(name = "subtotal", nullable = false)
     private double subtotal;
+    
+    //@ManyToOne()
+    //@JoinColumn(name = "fac_id")
+    //private Factura factura;
 
     public DetalleFactura() {
     	

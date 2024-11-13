@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.entities;
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 	@Entity
 	@Table(name = "facturas")
@@ -25,6 +26,9 @@ import java.time.LocalDate;
 
 	    @Column(name = "estado", nullable = false)
 	    private boolean estado;
+	    
+	    //@OneToMany (mappedBy = "factura", fetch=FetchType.LAZY, cascade= {CascadeType.ALL})
+		//private List<DetalleFactura> detalles;
 
 	    public Factura() {
 	        this.fecha = LocalDate.now(); 
