@@ -2,6 +2,8 @@ package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import org.hibernate.Hibernate;
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.entities.Factura;
@@ -21,17 +23,27 @@ public class FacturaDAOImpl implements IFacturaDao {
             if (manager.getTransaction().isActive()) {
                 manager.getTransaction().rollback();
             }
-            throw new RuntimeException("No se pudo guardar la factura", e);
+            System.err.println("Error al guardar la factura: " + e.getMessage());
         }
     }
 
     @Override
     public Factura buscarPorId(Long id) {
+        Factura factura = null;
         try {
-            return manager.find(Factura.class, id);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar la factura con ID " + id, e);
+            factura = manager.find(Factura.class, id);
+            // Verificar si la factura existe y está activa
+            if (factura != null && factura.isEstado()) {
+                // Inicializar la colección de detalles para evitar LazyInitializationException
+                Hibernate.initialize(factura.getDetalles());
+            } else {
+                System.out.println("Factura con ID " + id + " no encontrada o está inactiva.");
+                factura = null;
+            }
+        } catch (PersistenceException e) {
+            System.err.println("Error al buscar la factura con ID " + id + ": " + e.getMessage());
         }
+        return factura;
     }
 
     @Override
@@ -44,7 +56,7 @@ public class FacturaDAOImpl implements IFacturaDao {
             if (manager.getTransaction().isActive()) {
                 manager.getTransaction().rollback();
             }
-            throw new RuntimeException("Error al actualizar la factura", e);
+            System.err.println("Error al actualizar la factura: " + e.getMessage());
         }
     }
 
@@ -53,24 +65,32 @@ public class FacturaDAOImpl implements IFacturaDao {
         try {
             manager.getTransaction().begin();
             Factura factura = manager.find(Factura.class, id);
-            if (factura != null) {
-                manager.remove(factura);
+            if (factura != null && factura.isEstado()) {
+                // Eliminación lógica
+                factura.setEstado(false);
+                manager.merge(factura);
+                System.out.println("Factura con ID " + id + " eliminada lógicamente.");
+            } else {
+                System.out.println("Factura con ID " + id + " no encontrada o ya está eliminada.");
             }
             manager.getTransaction().commit();
         } catch (Exception e) {
             if (manager.getTransaction().isActive()) {
                 manager.getTransaction().rollback();
             }
-            throw new RuntimeException("Error al eliminar la factura", e);
+            System.err.println("Error al eliminar la factura: " + e.getMessage());
         }
     }
 
     @Override
     public List<Factura> obtenerTodos() {
+        List<Factura> facturas = null;
         try {
-            return manager.createQuery("FROM Factura", Factura.class).getResultList();
+            // Obtener solo facturas activas
+            facturas = manager.createQuery("FROM Factura f WHERE f.estado = true", Factura.class).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Error al obtener todas las facturas", e);
+            System.err.println("Error al obtener todas las facturas: " + e.getMessage());
         }
+        return facturas;
     }
 }

@@ -80,9 +80,12 @@ public class Cliente {
 	}
 	@Override
 	public String toString() {
-		return "Cliente [id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", domicilio=" + domicilio
-				+ ", dni=" + dni + ", estado=" + estado + "]";
-	}
-	
-	
+	    return "Cliente" +
+	           "\nID=" + id +
+	           "\nNombre=" + nombre +
+	           "\nApellido=" + apellido +
+	           "\nDomicilio=" + domicilio +
+	           "\nDNI=" + dni +
+	           "\nEstado=" + (estado ? "Activo" : "Inactivo");
+	}	
 }

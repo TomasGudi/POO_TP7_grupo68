@@ -20,9 +20,9 @@ public class DetalleFactura {
     @Column(name = "subtotal", nullable = false)
     private double subtotal;
     
-    //@ManyToOne()
-    //@JoinColumn(name = "fac_id")
-    //private Factura factura;
+    @ManyToOne()
+    @JoinColumn(name = "fac_id")
+    private Factura factura;
 
     public DetalleFactura() {
     	
@@ -66,8 +66,20 @@ public class DetalleFactura {
         this.subtotal = subtotal;
     }
 
-    @Override
-    public String toString() {
-        return "DetalleFactura [id=" + id + ", producto=" + producto + ", cantidad=" + cantidad + ", subtotal=" + subtotal + "]";
-    }
+    public Factura getFactura() {
+		return factura;
+	}
+
+	public void setFactura(Factura factura) {
+		this.factura = factura;
+	}
+
+	@Override
+	public String toString() {
+	    return "ID=" + id +
+	           "\nProducto=" + producto.getDescripcion() +
+	           "\nCantidad=" + cantidad +
+	           "\nSubtotal=" + subtotal;
+	}
+
 }

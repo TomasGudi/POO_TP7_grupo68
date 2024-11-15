@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.entities;
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 	@Entity
@@ -27,8 +28,8 @@ import java.util.List;
 	    @Column(name = "estado", nullable = false)
 	    private boolean estado;
 	    
-	    //@OneToMany (mappedBy = "factura", fetch=FetchType.LAZY, cascade= {CascadeType.ALL})
-		//private List<DetalleFactura> detalles;
+	    @OneToMany(mappedBy = "factura", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	    private List<DetalleFactura> detalles = new ArrayList<>();
 
 	    public Factura() {
 	        this.fecha = LocalDate.now(); 
@@ -89,16 +90,22 @@ import java.util.List;
 	    public void setEstado(boolean estado) {
 	        this.estado = estado;
 	    }
-	    @Override
+	    public List<DetalleFactura> getDetalles() {
+			return detalles;
+		}
+
+		public void setDetalles(List<DetalleFactura> detalles) {
+			this.detalles = detalles;
+		}
+
+		@Override
 	    public String toString() {
-	        return "Factura{" +
-	               "ID=" + id +
-	               ", Fecha=" + fecha +
-	               ", Cliente=" + cliente.getNombre() + " " + cliente.getApellido() +
-	               ", Total=" + total +
-	               ", Estado=" + (estado ? "Activa" : "Eliminada") +
-	               '}';
+	        return "Factura:" +
+	               "\nID=" + id +
+	               "\nFecha=" + fecha +
+	               "\nCliente=" + cliente.getNombre() + " " + cliente.getApellido() +
+	               "\nTotal=" + total +
+	               "\nEstado=" + (estado ? "Activa" : "Eliminada");
 	    }
 
 	}
-

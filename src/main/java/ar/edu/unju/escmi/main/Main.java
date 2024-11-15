@@ -3,6 +3,7 @@ package ar.edu.unju.escmi.main;
 import java.util.Scanner;
 
 import java.util.List;
+import java.util.ArrayList;
 import ar.edu.unju.escmi.entities.*;
 import ar.edu.unju.escmi.dao.*;
 import ar.edu.unju.escmi.dao.imp.*;
@@ -115,51 +116,80 @@ public class Main {
     }
 
     public static void realizarVenta(Scanner scanner) {
-    	double total = 0;
+        double total = 0;
         System.out.print("Ingrese el ID del cliente: ");
         long clienteId = scanner.nextLong();
-        scanner.nextLine();  
+        scanner.nextLine();
 
         Cliente cliente = ClienteDAO.buscarPorId(clienteId);
         if (cliente == null) {
             System.out.println("Cliente no encontrado.");
             return;
         }
-        
+
+        List<DetalleFactura> detalles = new ArrayList<>();
         boolean agregarProductos = true;
+
         while (agregarProductos) {
             System.out.print("Ingrese el ID del producto: ");
             long productoId = scanner.nextLong();
             System.out.print("Ingrese la cantidad: ");
             int cantidad = scanner.nextInt();
-            scanner.nextLine(); 
+            scanner.nextLine();
 
             Producto producto = ProductoDAO.buscarPorId(productoId);
             if (producto == null) {
                 System.out.println("Producto no encontrado.");
             } else {
-            	total = total + producto.getPrecioUnitario();
-                DetalleFactura detalle = new DetalleFactura(producto, cantidad, producto.getPrecioUnitario() * cantidad);
-                DetalleFacturaDAO.guardar(detalle); 
+                double subtotal = producto.getPrecioUnitario() * cantidad;
+                total += subtotal;
+
+                // Crear detalle (no guardar aún)
+                DetalleFactura detalle = new DetalleFactura(producto, cantidad, subtotal);
+                detalles.add(detalle);
             }
 
             System.out.print("¿Desea agregar otro producto? (s/n): ");
             agregarProductos = scanner.nextLine().equalsIgnoreCase("s");
         }
 
-        FacturaDAO.guardar(new Factura(cliente, cliente.getDomicilio(), total, true)); 
-        System.out.println("Venta registrada exitosamente.");
+        if (!detalles.isEmpty()) {
+            // Persistir la factura primero
+            Factura factura = new Factura(cliente, cliente.getDomicilio(), total, true);
+            FacturaDAO.guardar(factura);
+
+            // Asociar cada detalle a la factura y guardar
+            for (DetalleFactura detalle : detalles) {
+                detalle.setFactura(factura);
+                DetalleFacturaDAO.guardar(detalle);
+            }
+
+            System.out.println("Venta registrada exitosamente.");
+        } else {
+            System.out.println("No se registraron productos en la venta.");
+        }
     }
 
     public static void buscarFactura(Scanner scanner) {
         System.out.print("Ingrese el número de factura: ");
         long facturaId = scanner.nextLong();
-        scanner.nextLine();  
+        scanner.nextLine();
 
         Factura factura = FacturaDAO.buscarPorId(facturaId);
         if (factura != null) {
+            // Mostrar detalles de la factura
             System.out.println("Datos de la Factura:");
             System.out.println(factura);
+
+            // Inicializar y mostrar los detalles
+            if (!factura.getDetalles().isEmpty()) {
+                System.out.println("Detalles de la Factura:");
+                for (DetalleFactura detalle : factura.getDetalles()) {
+                    System.out.println(detalle);
+                }
+            } else {
+                System.out.println("La factura no tiene detalles.");
+            }
         } else {
             System.out.println("Factura no encontrada.");
         }
@@ -253,11 +283,22 @@ public class Main {
 	    if (!facturas.isEmpty()) {
 	        for (Factura factura : facturas) {
 	            System.out.println(factura);
+
+	            // Verificar si la lista de detalles está inicializada y no está vacía
+	            if (factura.getDetalles() != null && !factura.getDetalles().isEmpty()) {
+	                System.out.println("Detalles de la Factura:");
+	                for (DetalleFactura detalle : factura.getDetalles()) {
+	                    System.out.println(detalle);
+	                }
+	            } else {
+	                System.out.println("No hay detalles para esta factura.");
+	            }
 	        }
 	    } else {
 	        System.out.println("No hay facturas registradas.");
 	    }
 	}
+
 
 	public static void mostrarClientes() {
 	    List<Cliente> clientes = ClienteDAO.obtenerTodos();
@@ -279,4 +320,3 @@ public class Main {
 	    }
 	}
 }
-
